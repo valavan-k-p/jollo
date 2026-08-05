@@ -88,7 +88,14 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-transparent">
+      <header 
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+          scrolled 
+            ? "bg-black/90 backdrop-blur-md shadow-lg" 
+            : "bg-gradient-to-b from-black/80 via-black/40 to-transparent"
+        )}
+      >
         <div className="container-jollo flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link
@@ -137,9 +144,9 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Mobile hamburger */}
+            {/* Mobile hamburger button — 48px touch target */}
             <button
-              className="lg:hidden flex flex-col gap-1.5 p-2 cursor-pointer"
+              className="lg:hidden min-h-[48px] min-w-[48px] flex flex-col items-center justify-center gap-1.5 p-3 cursor-pointer rounded-full active:bg-white/10 transition-colors"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
             >
@@ -160,33 +167,44 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Overlay */}
       {isMobileMenuMounted && (
         <div
           ref={mobileMenuRef}
-          className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex flex-col pt-20 pb-10 px-6 overflow-y-auto will-change-transform"
+          className="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl flex flex-col pt-24 pb-10 px-6 pb-safe overflow-y-auto will-change-transform"
         >
           {/* Radial glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#e9e612]/5 blur-[100px] rounded-full pointer-events-none" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#e9e612]/10 blur-[120px] rounded-full pointer-events-none" />
 
-          <nav className="flex flex-col gap-1 mt-8 relative z-10">
-            {nav.map((item, i) => (
-              <div key={item.href} data-mobile-item>
-                <Link
-                  href={item.href}
-                  className="block py-3 px-2 font-display text-3xl font-semibold text-white border-b border-white/5 hover:text-[#e9e612] transition-colors duration-200"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              </div>
-            ))}
+          <nav className="flex flex-col gap-2 mt-4 relative z-10">
+            {nav.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <div key={item.href} data-mobile-item>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "flex items-center justify-between min-h-[52px] py-3 px-4 rounded-xl font-display text-2xl font-semibold border-b border-white/5 transition-all duration-200",
+                      isActive
+                        ? "text-[#e9e612] bg-white/[0.06] border-[#e9e612]/30 pl-5"
+                        : "text-white/90 hover:text-white active:bg-white/[0.04]"
+                    )}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <span>{item.label}</span>
+                    {isActive && (
+                      <span className="w-2 h-2 rounded-full bg-[#e9e612] shadow-[0_0_12px_#e9e612]" />
+                    )}
+                  </Link>
+                </div>
+              );
+            })}
           </nav>
 
           <div className="mt-auto pt-8 relative z-10" data-mobile-item>
             <Link
               href={site.primaryCta.href}
-              className="block w-full text-center py-4 rounded-2xl bg-[#e9e612] text-black font-display font-semibold text-sm tracking-wide hover:bg-[#f5f200] transition-colors duration-200 shadow-[0_0_40px_rgba(233,230,18,0.3)]"
+              className="flex items-center justify-center min-h-[52px] w-full text-center py-4 rounded-2xl bg-[#e9e612] text-black font-display font-semibold text-base tracking-wide active:scale-[0.98] transition-transform duration-200 shadow-[0_0_40px_rgba(233,230,18,0.3)]"
               onClick={() => setMenuOpen(false)}
             >
               {site.primaryCta.label}

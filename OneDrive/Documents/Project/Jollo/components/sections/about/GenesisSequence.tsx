@@ -97,74 +97,91 @@ export default function GenesisSequence() {
     if (!track) return;
 
     gsap.registerPlugin(ScrollTrigger);
+    const mm = gsap.matchMedia();
 
-    const trigger = ScrollTrigger.create({
-      trigger: track,
-      start: "top top",
-      end: "bottom bottom",
-      onUpdate: (self) => {
-        target.current = self.progress;
-      },
+    // Shared paint function — used by both mobile and desktop, with
+    // breakpoint-specific inertia passed in.
+    const createPaint = (inertia: number) => {
+      let lastActive = -1;
+
+      return () => {
+        progress.current += (target.current - progress.current) * inertia;
+        const p = progress.current;
+
+        // Chapter copy
+        GENESIS_CHAPTERS.forEach((chapter, i) => {
+          const el = chapterRefs.current[i];
+          if (!el) return;
+          const op = chapterOpacity(p, chapter);
+          el.style.opacity = String(op);
+          el.style.transform = `translate3d(0, ${(1 - op) * 22}px, 0)`;
+        });
+
+        // Progress rail (desktop only, hidden on mobile via CSS)
+        if (railFillRef.current) {
+          railFillRef.current.style.transform = `scaleY(${p})`;
+        }
+        const idx = activeChapterIndex(p);
+        if (idx !== lastActive) {
+          lastActive = idx;
+          tickRefs.current.forEach((tick, i) => {
+            if (tick) tick.style.opacity = i === idx ? "1" : "0.25";
+          });
+          markerRefs.current.forEach((marker, i) => {
+            if (marker) marker.style.opacity = i === idx ? "1" : "0";
+          });
+        }
+
+        // Scroll hint
+        if (hintRef.current) {
+          hintRef.current.style.opacity = String(1 - smoothstep(0.02, 0.1, p));
+        }
+
+        // Gold thread bridge
+        if (bridgeRef.current) {
+          const b = bridgeAmount(p);
+          bridgeRef.current.style.opacity = String(b);
+          bridgeRef.current.style.transform = `scaleY(${b})`;
+        }
+      };
+    };
+
+    /* ── Desktop: full inertia, smooth scrubbing ─────────────────────── */
+    mm.add("(min-width: 768px)", () => {
+      const trigger = ScrollTrigger.create({
+        trigger: track,
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (self) => { target.current = self.progress; },
+      });
+      const paint = createPaint(0.18);
+      paint();
+      gsap.ticker.add(paint);
+      return () => {
+        gsap.ticker.remove(paint);
+        trigger.kill();
+      };
     });
 
-    let lastActive = -1;
-
-    const paint = () => {
-      // A little inertia on top of Lenis so nothing ever snaps.
-      progress.current += (target.current - progress.current) * 0.18;
-      const p = progress.current;
-
-      // Chapter copy
-      GENESIS_CHAPTERS.forEach((chapter, i) => {
-        const el = chapterRefs.current[i];
-        if (!el) return;
-        const op = chapterOpacity(p, chapter);
-        el.style.opacity = String(op);
-        el.style.transform = `translate3d(0, ${(1 - op) * 22}px, 0)`;
-        // Deliberately no `visibility: hidden` — the blocks carry no focusable
-        // content and the overlay is pointer-events-none, so leaving them in
-        // the accessibility tree lets a screen reader hear the whole narrative
-        // in order without scrolling seven viewports.
+    /* ── Mobile: faster inertia, tighter response ────────────────────── */
+    mm.add("(max-width: 767px)", () => {
+      const trigger = ScrollTrigger.create({
+        trigger: track,
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (self) => { target.current = self.progress; },
       });
+      // Higher inertia value = snappier response on touch
+      const paint = createPaint(0.3);
+      paint();
+      gsap.ticker.add(paint);
+      return () => {
+        gsap.ticker.remove(paint);
+        trigger.kill();
+      };
+    });
 
-      // Progress rail
-      if (railFillRef.current) {
-        railFillRef.current.style.transform = `scaleY(${p})`;
-      }
-      const idx = activeChapterIndex(p);
-      if (idx !== lastActive) {
-        lastActive = idx;
-        tickRefs.current.forEach((tick, i) => {
-          if (tick) tick.style.opacity = i === idx ? "1" : "0.25";
-        });
-        markerRefs.current.forEach((marker, i) => {
-          if (marker) marker.style.opacity = i === idx ? "1" : "0";
-        });
-      }
-
-      // Scroll hint retires once the first chapter is behind us
-      if (hintRef.current) {
-        hintRef.current.style.opacity = String(1 - smoothstep(0.02, 0.1, p));
-      }
-
-      // The gold thread: the docked orb's light reaching down into the real story.
-      if (bridgeRef.current) {
-        const b = bridgeAmount(p);
-        bridgeRef.current.style.opacity = String(b);
-        bridgeRef.current.style.transform = `scaleY(${b})`;
-      }
-    };
-
-    // Ride the GSAP ticker rather than opening a second rAF loop: Lenis is
-    // already driven from it, so this runs after the scroll position settles
-    // each frame instead of racing it.
-    paint();
-    gsap.ticker.add(paint);
-
-    return () => {
-      gsap.ticker.remove(paint);
-      trigger.kill();
-    };
+    return () => mm.revert();
   }, [reduced, ready]);
 
   /* ─── Reduced motion: the same story, told without movement ───────────── */
@@ -283,7 +300,9 @@ function ChapterBlock({ chapter, index, ref }: ChapterBlockProps) {
     <div
       ref={ref}
       className={`absolute inset-x-0 flex flex-col items-center text-center px-[clamp(1.5rem,6vw,6rem)] will-change-transform ${
-        low ? "bottom-[7vh]" : "top-1/2 -translate-y-1/2"
+        low
+          ? "bottom-[14vh] md:bottom-[7vh]"
+          : "top-1/2 -translate-y-1/2"
       }`}
       style={{ opacity: 0 }}
     >

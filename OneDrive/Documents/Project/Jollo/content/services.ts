@@ -7,6 +7,7 @@ export const servicePages: ServicePageData[] = [
     tagline: "Identity that commands attention.",
     heroSubtext:
       "We build brand systems that are strategically grounded and visually unmistakable — from naming and positioning to full identity design and brand activation.",
+    heroImage: "/images/expo/branding.jpeg",
     problemStatement:
       "Most brands look and sound like their competitors. When everything looks the same, nothing gets chosen. We diagnose the gap between who you are and how you appear — then close it.",
     capabilities: [
@@ -99,6 +100,7 @@ export const servicePages: ServicePageData[] = [
     tagline: "Campaigns that convert. Strategies that compound.",
     heroSubtext:
       "From integrated campaigns to performance marketing, we build marketing programmes that generate measurable business outcomes — not just impressions.",
+    heroImage: "/images/expo/marketing solution.jpeg",
     problemStatement:
       "Marketing spend without strategy is noise. Most companies have campaigns without a marketing system. We build the system first, then execute within it — so every rupee compounds.",
     capabilities: [
@@ -186,6 +188,7 @@ export const servicePages: ServicePageData[] = [
     tagline: "Meetings. Incentives. Conferences. Exhibitions.",
     heroSubtext:
       "We design and manage corporate events at scale — from boardroom meetings to international conferences with thousands of attendees across multiple countries.",
+    heroImage: "/images/expo/M.I.C.E.jpeg",
     problemStatement:
       "Corporate events are too often reduced to logistics checklists. The opportunity is far greater — every M.I.C.E. event is a brand experience, a culture moment, and a business investment. We design both the logistics and the experience.",
     capabilities: [
@@ -278,6 +281,7 @@ export const servicePages: ServicePageData[] = [
     tagline: "Every milestone deserves a moment worth remembering.",
     heroSubtext:
       "Weddings, anniversaries, milestone birthdays, and private celebrations — crafted with taste, precision, and the kind of detail that turns a day into a memory.",
+    heroImage: "/images/expo/celebration.jpeg",
     problemStatement:
       "Generic celebration planning produces generic celebrations. We design experiences that reflect the people being celebrated — their story, their style, their guests — with a level of craft that makes every element feel considered.",
     capabilities: [
@@ -365,6 +369,7 @@ export const servicePages: ServicePageData[] = [
     tagline: "Digital engineering for brands that mean business.",
     heroSubtext:
       "We build websites, web applications, and digital products that perform — technically and commercially. Jollo X is the engineering arm of Jollo Experience.",
+    heroImage: "/images/expo/jollo x.jpeg",
     problemStatement:
       "Most agency websites look good in screenshots and perform poorly in production. We build digital experiences that are fast, accessible, and architecturally sound — not just visually impressive.",
     capabilities: [
@@ -452,6 +457,7 @@ export const servicePages: ServicePageData[] = [
     tagline: "Strategy that moves the needle.",
     heroSubtext:
       "We partner with founders and growth teams to diagnose constraints, design growth systems, and optimise the metrics that matter — with a bias for execution, not just analysis.",
+    heroImage: "/images/expo/growth.jpeg",
     problemStatement:
       "Growth stalls when strategy and execution are disconnected. Most consultants deliver decks. We deliver outcomes — by staying close to the work, the data, and the team doing both.",
     capabilities: [

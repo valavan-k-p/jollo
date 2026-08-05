@@ -49,17 +49,10 @@ export default function AboutPage() {
     const root = containerRef.current;
     if (!root) return;
 
-    const ctx = gsap.context(() => {
-      gsap.from("[data-mission-text]", {
-        scrollTrigger: { trigger: "[data-mission-text]", start: "top 80%" },
-        opacity: 0, y: 30, duration: 1, ease: "expo.out",
-      });
+    const mm = gsap.matchMedia(root);
 
-      gsap.from("[data-intro-card]", {
-        scrollTrigger: { trigger: "[data-intro-cards]", start: "top 80%" },
-        opacity: 0, y: 40, rotation: 0, stagger: 0.12, duration: 0.9, ease: "expo.out",
-      });
-
+    /* ── Shared chapter setup (both breakpoints use this) ──────────── */
+    const setupChapters = (isMobile: boolean) => {
       const items = gsap.utils.toArray<HTMLElement>(".chapter-item");
       items.forEach((item) => {
         const path = item.querySelector<HTMLElement>(".chapter-path");
@@ -83,12 +76,22 @@ export default function AboutPage() {
         if (triggerPoint) {
           ScrollTrigger.create({
             trigger: triggerPoint,
-            start: "top center",
+            start: isMobile ? "top 70%" : "top center",
             onEnter: () => {
               if (hasPlayed) return;
               hasPlayed = true;
-              if (title) gsap.to(title, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out", delay: 0.1 });
-              if (text) gsap.to(text, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out", delay: 0.2 });
+              if (title) gsap.to(title, {
+                opacity: 1, y: 0,
+                duration: isMobile ? 0.5 : 0.7,
+                ease: "expo.out",
+                delay: 0.1,
+              });
+              if (text) gsap.to(text, {
+                opacity: 1, y: 0,
+                duration: isMobile ? 0.5 : 0.7,
+                ease: "expo.out",
+                delay: 0.15,
+              });
             },
           });
         }
@@ -119,22 +122,18 @@ export default function AboutPage() {
 
       const updateYear = (newIndex: number, direction = "forward") => {
         if (newIndex === activeIndex || !yearItems[newIndex]) return;
-        const current = yearItems[activeIndex];
-        const next = yearItems[newIndex];
         yearItems.forEach((el, i) => {
           el.classList.remove("is-active", "is-out-up", "is-out-down");
           if (i < newIndex) el.classList.add("is-out-up");
           else if (i > newIndex) el.classList.add("is-out-down");
         });
         if (direction === "forward") {
-          current.classList.remove("is-active", "is-out-down");
-          current.classList.add("is-out-up");
+          yearItems[activeIndex]?.classList.add("is-out-up");
         } else {
-          current.classList.remove("is-active", "is-out-up");
-          current.classList.add("is-out-down");
+          yearItems[activeIndex]?.classList.add("is-out-down");
         }
-        next.classList.remove("is-out-up", "is-out-down");
-        next.classList.add("is-active");
+        yearItems[newIndex]?.classList.remove("is-out-up", "is-out-down");
+        yearItems[newIndex]?.classList.add("is-active");
         activeIndex = newIndex;
       };
 
@@ -153,6 +152,21 @@ export default function AboutPage() {
         });
       });
       document.fonts?.ready.then(() => { masks.forEach(fitText); ScrollTrigger.refresh(); });
+    };
+
+    /* ── Desktop timeline ──────────────────────────────────────────── */
+    mm.add("(min-width: 768px)", () => {
+      gsap.from("[data-mission-text]", {
+        scrollTrigger: { trigger: "[data-mission-text]", start: "top 80%" },
+        opacity: 0, y: 30, duration: 1, ease: "expo.out",
+      });
+
+      gsap.from("[data-intro-card]", {
+        scrollTrigger: { trigger: "[data-intro-cards]", start: "top 80%" },
+        opacity: 0, y: 40, rotation: 0, stagger: 0.12, duration: 0.9, ease: "expo.out",
+      });
+
+      setupChapters(false);
 
       gsap.from("[data-orb-story]", {
         scrollTrigger: { trigger: "[data-orb-story]", start: "top 80%" },
@@ -163,9 +177,29 @@ export default function AboutPage() {
         scrollTrigger: { trigger: "[data-cta-card]", start: "top 85%" },
         opacity: 0, y: 40, duration: 1, ease: "expo.out",
       });
-    }, root);
+    });
 
-    return () => ctx.revert();
+    /* ── Mobile timeline: shorter distances, faster durations ──────── */
+    mm.add("(max-width: 767px)", () => {
+      gsap.from("[data-mission-text]", {
+        scrollTrigger: { trigger: "[data-mission-text]", start: "top 88%" },
+        opacity: 0, y: 20, duration: 0.7, ease: "expo.out",
+      });
+
+      setupChapters(true);
+
+      gsap.from("[data-orb-story]", {
+        scrollTrigger: { trigger: "[data-orb-story]", start: "top 88%" },
+        opacity: 0, y: 24, duration: 0.8, ease: "expo.out",
+      });
+
+      gsap.from("[data-cta-card]", {
+        scrollTrigger: { trigger: "[data-cta-card]", start: "top 90%" },
+        opacity: 0, y: 24, duration: 0.7, ease: "expo.out",
+      });
+    });
+
+    return () => mm.revert();
   }, []);
 
   return (

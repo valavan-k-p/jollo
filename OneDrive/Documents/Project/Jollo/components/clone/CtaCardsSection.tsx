@@ -71,7 +71,10 @@ export default function CtaCardsSection({ contactHref = "/contact" }: CtaCardsSe
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia(sectionRef.current!);
+
+    /* Desktop: full stagger */
+    mm.add("(min-width: 768px)", () => {
       gsap.from("[data-cta-cards-title]", {
         scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
         opacity: 0, y: 30, duration: 0.9, ease: "expo.out",
@@ -80,8 +83,21 @@ export default function CtaCardsSection({ contactHref = "/contact" }: CtaCardsSe
         scrollTrigger: { trigger: sectionRef.current, start: "top 72%" },
         opacity: 0, y: 60, stagger: 0.15, duration: 1, ease: "expo.out",
       });
-    }, sectionRef);
-    return () => ctx.revert();
+    });
+
+    /* Mobile: lighter, closer triggers */
+    mm.add("(max-width: 767px)", () => {
+      gsap.from("[data-cta-cards-title]", {
+        scrollTrigger: { trigger: sectionRef.current, start: "top 88%" },
+        opacity: 0, y: 16, duration: 0.6, ease: "expo.out",
+      });
+      gsap.from("[data-momentum-hover-element]", {
+        scrollTrigger: { trigger: sectionRef.current, start: "top 82%" },
+        opacity: 0, y: 30, stagger: 0.1, duration: 0.7, ease: "expo.out",
+      });
+    });
+
+    return () => mm.revert();
   }, []);
 
   return (

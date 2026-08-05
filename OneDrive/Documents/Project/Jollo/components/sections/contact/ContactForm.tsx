@@ -57,7 +57,7 @@ function GlassInput({
         <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ boxShadow: "inset 0 2px 4px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.03)" }} />
         <input
           {...props}
-          className={`relative z-10 w-full bg-transparent rounded-xl py-4 px-5 text-white font-body text-[15px] placeholder:text-white focus:outline-none transition-all duration-500 ${className}`}
+          className={`relative z-10 w-full min-h-[52px] bg-transparent rounded-xl py-3.5 px-5 text-white font-body text-base placeholder:text-white/40 focus:outline-none transition-all duration-500 ${className}`}
         />
       </div>
     </div>
@@ -77,7 +77,7 @@ function GlassTextarea({
         <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ boxShadow: "inset 0 2px 4px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.03)" }} />
         <textarea
           {...props}
-          className={`relative z-10 w-full bg-transparent rounded-xl py-4 px-5 text-white font-body text-[15px] placeholder:text-white focus:outline-none transition-all duration-500 resize-none ${className}`}
+          className={`relative z-10 w-full min-h-[120px] bg-transparent rounded-xl py-4 px-5 text-white font-body text-base placeholder:text-white/40 focus:outline-none transition-all duration-500 resize-none ${className}`}
         />
       </div>
     </div>
@@ -100,7 +100,7 @@ function GlassSelect({
         <select
           {...props}
           defaultValue=""
-          className={`relative z-10 w-full appearance-none bg-transparent rounded-xl py-4 px-5 text-white font-body text-[15px] focus:outline-none transition-all duration-500 cursor-pointer ${className}`}
+          className={`relative z-10 w-full min-h-[52px] appearance-none bg-transparent rounded-xl py-3.5 px-5 text-white font-body text-base focus:outline-none transition-all duration-500 cursor-pointer ${className}`}
         >
           <option value="" disabled className="bg-black text-white/50">
             {placeholder}

@@ -17,7 +17,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <div className="relative w-full h-[200vh]" aria-hidden="true">
+      <div className="relative w-full h-[60vh] md:h-[200vh]" aria-hidden="true">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1a1a]" />
       </div>
       <div className="relative bg-[#1a1a1a]">

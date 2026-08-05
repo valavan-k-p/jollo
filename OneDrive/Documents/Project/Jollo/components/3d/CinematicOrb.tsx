@@ -299,14 +299,25 @@ export default function CinematicOrb({ className = "" }: { className?: string })
     const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0, 5);
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
+    const isMobile = window.innerWidth < 768;
+    const isTablet = !isMobile && window.innerWidth <= 1024;
+    const maxDpr = isMobile ? 1.0 : isTablet ? Math.min(window.devicePixelRatio, 1.5) : Math.min(window.devicePixelRatio, 2);
 
-    // ── Morphing orb (the dot of the exclamation mark) ────────────────────
-    const geo = new THREE.IcosahedronGeometry(1.45, 5);
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: !isMobile,
+      alpha: true,
+      powerPreference: isMobile ? "low-power" : "high-performance",
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(maxDpr);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = isMobile ? 0.85 : 1.0;
+
+    // ── Morphing orb ──────────────────────────────────────────────────────
+    // Mobile: subdivision 2, tablet: 3, desktop: 5
+    const subdivision = isMobile ? 2 : isTablet ? 3 : 5;
+    const geo = new THREE.IcosahedronGeometry(1.45, subdivision);
     const mat = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
@@ -339,26 +350,36 @@ export default function CinematicOrb({ className = "" }: { className?: string })
     scene.add(exclMesh);
 
     // ── Post-processing ───────────────────────────────────────────────────
+    // Mobile: bloom only (skip cinematic pass to halve GPU cost)
+    // Tablet: bloom + cinematic at reduced resolution
+    // Desktop: full pipeline
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
 
+    const bloomStrength = isMobile ? 0.2 : isTablet ? 0.4 : 0.65;
     const bloom = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.65, 0.35, 0.88
+      bloomStrength, 0.35, 0.88
     );
     composer.addPass(bloom);
 
-    const cinePass = new ShaderPass(CINE_SHADER);
-    cinePass.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
-    composer.addPass(cinePass);
+    // Skip cinematic pass on mobile — saves a full-screen shader pass
+    const cinePass = isMobile ? null : new ShaderPass(CINE_SHADER);
+    if (cinePass) {
+      cinePass.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+      composer.addPass(cinePass);
+    }
 
-    // ── Mouse ─────────────────────────────────────────────────────────────
+    // ── Mouse (disabled on mobile — no hover, saves event overhead) ─────
     const mouse = { x: 0.5, y: 0.5, sx: 0.5, sy: 0.5 };
+    const hasHover = window.matchMedia("(hover: hover)").matches;
     const onMouse = (e: MouseEvent) => {
       mouse.x = e.clientX / window.innerWidth;
       mouse.y = 1 - e.clientY / window.innerHeight;
     };
-    window.addEventListener("mousemove", onMouse, { passive: true });
+    if (hasHover && !isMobile) {
+      window.addEventListener("mousemove", onMouse, { passive: true });
+    }
 
     // ── Scroll-driven animation state ─────────────────────────────────────
     const anim = { scale: 1, posX: 0, posY: 0, reveal: 0, velocity: 0 };
@@ -419,18 +440,26 @@ export default function CinematicOrb({ className = "" }: { className?: string })
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
       composer.setSize(window.innerWidth, window.innerHeight);
-      cinePass.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+      if (cinePass) cinePass.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
     };
     window.addEventListener("resize", onResize);
 
     // ── Animation loop ────────────────────────────────────────────────────
+    // Mobile: throttle to ~30fps to preserve battery
     const startMs = performance.now();
     let raf = 0;
     let dockedLowRes = false;
+    const frameInterval = isMobile ? 1000 / 30 : 0;
+    let lastTickMs = 0;
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
       const nowMs = performance.now();
+
+      // FPS throttle on mobile
+      if (isMobile && nowMs - lastTickMs < frameInterval) return;
+      lastTickMs = nowMs;
+
       const t = (nowMs - startMs) / 1000;
 
       // Scroll → docking, recomputed from the live page position every frame.
@@ -442,11 +471,12 @@ export default function CinematicOrb({ className = "" }: { className?: string })
       dockEased += (dockProgressAt(scrollY) - dockEased) * (1 - Math.exp(-dt / 0.18));
       applyDock(dockEased);
 
-      // Scroll velocity, which warps the orb's surface. Eases back to zero on
-      // its own once the page stops moving.
-      const rawVelocity = THREE.MathUtils.clamp((scrollY - lastScrollY) * 0.008, -1, 1);
+      // Scroll velocity warps the orb's surface. Disabled on mobile (cheaper).
+      if (!isMobile) {
+        const rawVelocity = THREE.MathUtils.clamp((scrollY - lastScrollY) * 0.008, -1, 1);
+        anim.velocity += (rawVelocity - anim.velocity) * 0.2;
+      }
       lastScrollY = scrollY;
-      anim.velocity += (rawVelocity - anim.velocity) * 0.2;
 
       // Once the orb has shrunk to its permanent corner-mark size, the full
       // multi-pass bloom pipeline is being computed across the entire
@@ -457,10 +487,10 @@ export default function CinematicOrb({ className = "" }: { className?: string })
       const shouldBeLowRes = anim.scale < 0.15;
       if (shouldBeLowRes !== dockedLowRes) {
         dockedLowRes = shouldBeLowRes;
-        const ratio = dockedLowRes ? 1 : Math.min(window.devicePixelRatio, 2);
+        const ratio = dockedLowRes ? 1 : maxDpr;
         renderer.setPixelRatio(ratio);
         composer.setSize(window.innerWidth, window.innerHeight);
-        cinePass.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+        if (cinePass) cinePass.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
       }
 
       // Smooth mouse
@@ -497,9 +527,9 @@ export default function CinematicOrb({ className = "" }: { className?: string })
         logoRef.current.style.opacity = String(logoOpacity);
       }
 
-      bloom.strength = 0.65;
+      bloom.strength = bloomStrength;
 
-      cinePass.uniforms.uTime.value = t;
+      if (cinePass) cinePass.uniforms.uTime.value = t;
       composer.render();
     };
     tick();
@@ -513,7 +543,14 @@ export default function CinematicOrb({ className = "" }: { className?: string })
       mat.dispose();
       exclGeo.dispose();
       exclMat.dispose();
+      
+      // Prevent WebGL context limit errors on hot-reloading
       renderer.dispose();
+      const gl = renderer.getContext();
+      if (gl) {
+        const ext = gl.getExtension('WEBGL_lose_context');
+        if (ext) ext.loseContext();
+      }
     };
   }, []);
 

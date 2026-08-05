@@ -11,7 +11,7 @@ export default function TrustedClients() {
   return (
     <section className="relative overflow-hidden bg-[#050505]">
       {/* Compact heading */}
-      <div className="container-gallery text-center" style={{ paddingTop: "120px" }}>
+      <div className="container-gallery text-center" style={{ paddingTop: "clamp(7rem, 14vw, 14rem)" }}>
         <div className="flex flex-col items-center">
           <p
             className="font-body uppercase tracking-[0.3em] text-[#e9e612]/50"
@@ -22,7 +22,7 @@ export default function TrustedClients() {
           <h2
             className="font-luxe uppercase text-[#fafafa]"
             style={{
-              fontSize: "clamp(3rem, 6vw, 5.5rem)",
+              fontSize: "clamp(2rem, 6vw, 5.5rem)",
               lineHeight: 1.05,
               letterSpacing: "-0.02em",
               marginTop: "16px",
@@ -75,26 +75,21 @@ export default function TrustedClients() {
         </div>
       </div>
 
-      {/* Mobile carousel */}
-      <div
-        className="md:hidden overflow-x-auto snap-x snap-mandatory scrollbar-hide"
-        style={{ paddingTop: "24px", paddingBottom: "24px" }}
-      >
-        <div className="flex gap-3 px-5" style={{ width: "max-content" }}>
+      {/* Mobile grid: clean 3-column / 4-column layout on phones */}
+      <div className="container-gallery md:hidden py-6">
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
           {clientLogos.map((client) => (
             <div
               key={client.name}
-              className="snap-center shrink-0 flex items-center justify-center rounded-xl
-                bg-white/[0.04] backdrop-blur-sm border border-white/[0.08]"
-              style={{ width: "100px", height: "100px" }}
+              className="flex items-center justify-center rounded-xl p-3 aspect-square
+                bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] active:scale-[0.98] transition-transform"
             >
               <Image
                 src={client.src}
                 alt={client.name}
-                width={60}
-                height={60}
-                className="object-contain opacity-80"
-                style={{ width: "60%", height: "60%" }}
+                width={100}
+                height={100}
+                className="object-contain opacity-90 w-full h-full"
                 loading="lazy"
               />
             </div>
@@ -103,7 +98,7 @@ export default function TrustedClients() {
       </div>
 
       {/* Section bottom spacing */}
-      <div style={{ height: "180px" }} />
+      <div style={{ height: "clamp(60px, 10vw, 120px)" }} />
     </section>
   );
 }

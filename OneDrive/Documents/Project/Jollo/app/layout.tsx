@@ -5,6 +5,7 @@ import {
   Archivo,
   Bebas_Neue,
   Inter,
+  Poppins,
 } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/organisms/Navbar";
@@ -72,6 +73,15 @@ const inter = Inter({
   preload: true,
 });
 
+/** HERO ROTATING WORD — geometric sans, bold and punchy. */
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: "700",
+  variable: "--font-poppins",
+  display: "swap",
+  preload: true,
+});
+
 export const metadata: Metadata = {
   title: {
     default: "Jollo Experience — Brand Experience & Growth Company",
@@ -125,7 +135,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bodoni.variable} ${cormorant.variable} ${archivo.variable} ${bebas.variable} ${inter.variable}`}
+      className={`${bodoni.variable} ${cormorant.variable} ${archivo.variable} ${bebas.variable} ${inter.variable} ${poppins.variable}`}
     >
       <body>
         <script

@@ -49,6 +49,7 @@ export interface ServicePageData {
   title: string;
   tagline: string;
   heroSubtext: string;
+  heroImage?: string;
   problemStatement: string;
   capabilities: { title: string; description: string }[];
   process: { step: number; title: string; description: string }[];

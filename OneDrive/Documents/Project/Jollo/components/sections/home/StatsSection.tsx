@@ -19,7 +19,7 @@ export default function StatsSection() {
             >
               <div className="absolute inset-0 bg-gradient-to-b from-[#e9e612]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-              <h3 className="font-editorial text-7xl md:text-8xl lg:text-[8rem] text-white tracking-tighter leading-none mb-4 group-hover:scale-105 transition-transform duration-500 will-change-transform">
+              <h3 className="font-editorial text-5xl md:text-8xl lg:text-[8rem] text-white tracking-tighter leading-none mb-2 md:mb-4 group-hover:scale-105 transition-transform duration-500 will-change-transform">
                 {stat.value}
                 <span className="text-[#e9e612]">{stat.suffix}</span>
               </h3>

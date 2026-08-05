@@ -45,7 +45,7 @@ function KineticRow({
         aria-hidden="true"
       >
         <span
-          className="font-editorial inline-block text-[4rem] md:text-[6rem] lg:text-[8rem] leading-none tracking-tight pr-8"
+          className="font-editorial inline-block text-[2.5rem] sm:text-[3.5rem] md:text-[6rem] lg:text-[8rem] leading-none tracking-tight pr-4 md:pr-8"
           style={{
             color: style === "fill" ? "#ffffff" : "#e9e612",
             WebkitTextStroke: undefined,

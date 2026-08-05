@@ -17,10 +17,10 @@ export default function ManifestoSection() {
         {BEATS.map((beat, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: i * 0.2, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.7, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
             <h2 className="text-display text-white">
               {beat.prefix} <span className="text-[#e9e612] italic">{beat.accent}</span> {beat.suffix}

@@ -7,9 +7,8 @@ import { gsap } from "gsap";
  * Film reel frames — real photos from the Jollo archive, numbered sequentially.
  * 53 images covering events, experiences, and behind-the-scenes moments.
  */
-const MILESTONES = Array.from({ length: 53 }, (_, i) => {
-  const num = String(i + 1).padStart(2, "0");
-  return { year: "", title: "", image: `/images/filmstrip/film-${num}.jpeg` };
+const MILESTONES = Array.from({ length: 52 }, (_, i) => {
+  return { year: "", title: "", image: `/images/film role/${i + 1}.jpeg` };
 });
 
 /**
@@ -147,6 +146,8 @@ export default function FilmStrip() {
                   aria-hidden={isDuplicate || undefined}
                   onMouseEnter={holdReel}
                   onMouseLeave={releaseReel}
+                  onTouchStart={holdReel}
+                  onTouchEnd={releaseReel}
                   onFocus={holdReel}
                   onBlur={releaseReel}
                   tabIndex={isDuplicate ? -1 : 0}

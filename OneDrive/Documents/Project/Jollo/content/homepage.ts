@@ -2,8 +2,8 @@ import type { Testimonial, CaseStudy } from "@/types/global";
 
 export const stats = [
   { value: "200", suffix: "+", label: "Experiences Delivered" },
-  { value: "10", suffix: "+", label: "Enterprise Clients" },
-  { value: "17", suffix: "+", label: "Years in Marketing" },
+  { value: "15", suffix: "+", label: "Clients" },
+  { value: "10", suffix: "+", label: "Years" },
 ];
 
 /**
@@ -28,7 +28,7 @@ export const heroShowcase: HeroShowcaseItem[] = [
     label: "M.I.C.E.",
     descriptor: "Meetings, incentives, conferences & exhibitions — engineered at scale.",
     meta: "200+ events · 12 countries",
-    href: "/services/mice",
+    href: "/work#mice",
     gradient: "linear-gradient(135deg, #0c1a2e 0%, #0a1424 45%, #02060d 100%)",
     glow: "radial-gradient(ellipse 70% 60% at 35% 25%, rgba(46,98,168,0.40) 0%, transparent 65%)",
   },
@@ -37,7 +37,7 @@ export const heroShowcase: HeroShowcaseItem[] = [
     label: "Brand Activations",
     descriptor: "Immersive brand moments that turn audiences into advocates.",
     meta: "Live & experiential",
-    href: "/services/marketing-solutions",
+    href: "/work#marketing-solutions",
     gradient: "linear-gradient(135deg, #0c1e0c 0%, #0a160a 45%, #020802 100%)",
     glow: "radial-gradient(ellipse 65% 65% at 65% 30%, rgba(70,160,80,0.34) 0%, transparent 65%)",
   },
@@ -55,7 +55,7 @@ export const heroShowcase: HeroShowcaseItem[] = [
     label: "Celebrations",
     descriptor: "Weddings & milestones, crafted with taste and precision.",
     meta: "300+ celebrations",
-    href: "/services/celebrations",
+    href: "/work#celebrations",
     gradient: "linear-gradient(135deg, #1e0a14 0%, #140610 45%, #06020a 100%)",
     glow: "radial-gradient(ellipse 70% 65% at 60% 28%, rgba(210,70,130,0.32) 0%, transparent 65%)",
   },
@@ -64,7 +64,7 @@ export const heroShowcase: HeroShowcaseItem[] = [
     label: "Marketing Campaigns",
     descriptor: "Integrated campaigns that convert attention into measurable growth.",
     meta: "3.2× average ROAS",
-    href: "/services/marketing-solutions",
+    href: "/work#marketing-solutions",
     gradient: "linear-gradient(135deg, #1f1405 0%, #160e03 45%, #080400 100%)",
     glow: "radial-gradient(ellipse 68% 62% at 38% 28%, rgba(224,158,46,0.32) 0%, transparent 65%)",
   },
@@ -166,10 +166,10 @@ export const visualChapters = [
 ];
 
 export const serviceList = [
-  { title: "Branding", href: "/services/branding", tagline: "Identity that commands attention." },
-  { title: "Marketing Solutions", href: "/services/marketing-solutions", tagline: "Campaigns that convert. Strategies that compound." },
-  { title: "M.I.C.E.", href: "/services/mice", tagline: "Experiences engineered at scale." },
-  { title: "Celebrations", href: "/services/celebrations", tagline: "Every milestone, made extraordinary." },
-  { title: "Jollo X", href: "/services/jollo-x", tagline: "Digital engineering for brands that mean business." },
-  { title: "Growth & Optimisation", href: "/services/growth-optimisation", tagline: "Strategy that moves the needle." },
+  { title: "Branding", href: "/work#branding", tagline: "Identity that commands attention." },
+  { title: "Marketing Solutions", href: "/work#marketing-solutions", tagline: "Campaigns that convert. Strategies that compound." },
+  { title: "M.I.C.E.", href: "/work#mice", tagline: "Experiences engineered at scale." },
+  { title: "Celebrations", href: "/work#celebrations", tagline: "Every milestone, made extraordinary." },
+  { title: "Jollo X", href: "/work#jollo-x", tagline: "Digital engineering for brands that mean business." },
+  { title: "Growth & Optimisation", href: "/work#growth-optimisation", tagline: "Strategy that moves the needle." },
 ];

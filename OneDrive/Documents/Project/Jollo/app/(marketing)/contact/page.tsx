@@ -64,13 +64,23 @@ export default function ContactPage() {
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia(containerRef.current!);
+
+    mm.add("(min-width: 768px)", () => {
       gsap.from("[data-contact-card]", {
         scrollTrigger: { trigger: "[data-contact-info]", start: "top 80%" },
         opacity: 0, y: 40, stagger: 0.12, duration: 0.9, ease: "expo.out",
       });
-    }, containerRef);
-    return () => ctx.revert();
+    });
+
+    mm.add("(max-width: 767px)", () => {
+      gsap.from("[data-contact-card]", {
+        scrollTrigger: { trigger: "[data-contact-info]", start: "top 88%" },
+        opacity: 0, y: 20, stagger: 0.08, duration: 0.6, ease: "expo.out",
+      });
+    });
+
+    return () => mm.revert();
   }, []);
 
   return (

@@ -402,8 +402,8 @@ body {
   max-width: 1440px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: clamp(1rem, 4vw, 4rem);
-  padding-right: clamp(1rem, 4vw, 4rem);
+  padding-left: clamp(1.25rem, 5vw, 4rem);
+  padding-right: clamp(1.25rem, 5vw, 4rem);
 }
 
 /* Gallery — wider container for cinematic spreads */
@@ -412,13 +412,21 @@ body {
   max-width: 1600px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: clamp(1rem, 4vw, 4rem);
-  padding-right: clamp(1rem, 4vw, 4rem);
+  padding-left: clamp(1.25rem, 5vw, 4rem);
+  padding-right: clamp(1.25rem, 5vw, 4rem);
 }
 
 .section-padding {
-  padding-top: clamp(5rem, 10vw, 10rem);
-  padding-bottom: clamp(5rem, 10vw, 10rem);
+  padding-top: clamp(3.5rem, 8vw, 10rem);
+  padding-bottom: clamp(3.5rem, 8vw, 10rem);
+}
+
+/* Safe area insets for mobile dynamic island & bottom gesture bar */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 20px);
 }
 
 /* ─── Yellow Glow ─────────────────────────────────────────────────────────── */
@@ -1064,6 +1072,13 @@ html.lenis body {
   position: relative;
   z-index: 1;
 }
+@media (max-width: 767px) {
+  .chapter-item {
+    padding-bottom: 5em;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
 .chapter-path_wrap {
   display: flex;
   flex-flow: column;
@@ -1481,9 +1496,16 @@ html.lenis body {
 }
 .services-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
   height: 100vh;
+}
+@media (max-width: 767px) {
+  .services-container {
+    justify-content: space-between;
+  }
 }
 .services-stack_list {
   perspective: 25vw;
@@ -1525,7 +1547,7 @@ html.lenis body {
 
 @media (max-width: 900px) {
   .genesis-track {
-    height: 520vh;
+    height: 400vh;
   }
 }
 
