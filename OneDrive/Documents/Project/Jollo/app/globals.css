@@ -1,0 +1,2187 @@
+@import "tailwindcss";
+
+/* ─── Font Faces ──────────────────────────────────────────────────────────────
+ * The three families are loaded by next/font in app/layout.tsx, which
+ * self-hosts them and exposes each as a CSS variable:
+ *
+ *   --font-bodoni     hero       Didone display, dramatic scale
+ *   --font-cormorant  our story  old-style serif, museum editorial
+ *   --font-archivo    services   neo-grotesk, bold uppercase
+ *   --font-bebas      timeline   condensed caps, movie credits
+ *   --font-inter      footer/UI  quiet and highly readable
+ *
+ * No @font-face blocks needed here — declaring them again would double-fetch.
+ */
+
+/* ─── Design System Tokens ────────────────────────────────────────────────── */
+
+@theme {
+  /* Colors */
+  --color-brand-black: #000000;
+  --color-brand-white: #ffffff;
+  --color-brand-yellow: #e9e612;
+  --color-brand-yellow-hover: #f5f200;
+
+  --color-surface-01: #0a0a0a;
+  --color-surface-02: #111111;
+  --color-surface-03: #1a1a1a;
+
+  --color-grey-950: #0a0a0a;
+  --color-grey-900: #111111;
+  --color-grey-800: #1a1a1a;
+  --color-grey-700: #262626;
+  --color-grey-600: #404040;
+  --color-grey-500: #525252;
+  --color-grey-400: #666666;
+  --color-grey-300: #999999;
+  --color-grey-200: #cccccc;
+  --color-grey-100: #e5e5e5;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #cccccc;
+  --color-text-muted: #666666;
+  --color-border: #222222;
+  --color-border-subtle: #1a1a1a;
+
+  /* ── Typography ──────────────────────────────────────────────────────────
+   * Five voices, one system. Each section owns one; contrast comes from the
+   * pairing rather than from colour.
+   *
+   *   luxe       Bodoni Moda        hero — Didone, dramatic scale
+   *   editorial  Cormorant Garamond our story — museum-wall serif
+   *   grotesk    Archivo            services — bold uppercase
+   *   condensed  Bebas Neue         timeline — movie-credit caps
+   *   ui         Inter              footer, body, interface
+   */
+  --font-luxe: var(--font-bodoni), "Didot", "Times New Roman", serif;
+  --font-editorial: var(--font-cormorant), "Times New Roman", Georgia, serif;
+  --font-grotesk: var(--font-archivo), system-ui, sans-serif;
+  --font-condensed: var(--font-bebas), "Oswald", Impact, sans-serif;
+  --font-ui: var(--font-inter), system-ui, sans-serif;
+
+  /* Aliases kept so existing markup keeps resolving */
+  --font-display: var(--font-grotesk);
+  --font-body: var(--font-ui);
+
+  /* Spacing */
+  --spacing-px: 1px;
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-32: 8rem;
+  --spacing-40: 10rem;
+  --spacing-48: 12rem;
+  --spacing-64: 16rem;
+
+  /* Border Radius */
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(233, 230, 18, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-yellow: 0 0 24px rgba(233, 230, 18, 0.2);
+
+  /* Animation durations */
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 600ms;
+  --duration-cinematic: 1200ms;
+
+  /* Easing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─── Base Styles ─────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: #000000;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ─── Typography Utilities ────────────────────────────────────────────────── */
+
+.font-editorial {
+  font-family: var(--font-editorial);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* ─── Typographic voices ──────────────────────────────────────────────────────
+ *
+ * Each block below is tuned as a piece of design rather than a size step:
+ * tracking, leading and optical size are set per voice, because the same
+ * numbers do not work across a Didone, an old-style serif and a condensed cap.
+ *
+ * The recurring rule on this site: as type gets larger, tracking gets tighter
+ * and leading gets shorter. Defaults are drawn for body copy and always look
+ * loose and airy at display sizes.
+ */
+
+/* ── HERO: Bodoni Moda ──────────────────────────────────────────────────────
+ * A Didone's hairlines shatter if it is set small or loose, and its optical
+ * size axis exists precisely for this: pushed to the display end the contrast
+ * sharpens and the serifs thin. Tracking goes decisively negative because
+ * Bodoni's sidebearings are drawn for text, not for 8rem headlines.
+ */
+.type-luxe {
+  font-family: var(--font-luxe);
+  font-optical-sizing: auto;
+  font-variation-settings: "opsz" 96;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+}
+
+.type-luxe--italic {
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* ── OUR STORY: Cormorant Garamond ──────────────────────────────────────────
+ * Museum caption logic. Cormorant is drawn light and runs small, so display
+ * use needs a size bump and generous leading — the airiness is the point.
+ */
+.type-editorial {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.06;
+}
+
+.type-editorial--quiet {
+  font-family: var(--font-editorial);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+
+/* Small caps label that reads as an exhibition placard */
+.type-placard {
+  font-family: var(--font-editorial);
+  font-weight: 600;
+  font-size: clamp(0.6875rem, 0.9vw, 0.8125rem);
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* ── SERVICES: Archivo ──────────────────────────────────────────────────────
+ * Bold uppercase grotesk. Uppercase always needs positive tracking — the
+ * counters are wider and the shapes lock up without it.
+ */
+.type-grotesk {
+  font-family: var(--font-grotesk);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.type-grotesk--caps {
+  font-family: var(--font-grotesk);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 0.98;
+}
+
+/*
+ * Uppercase grotesk for short sentences rather than labels. The eyebrow below
+ * bottoms out at 10px, which is fine for a one-word tag but unreadable for a
+ * full line of tracked caps — this keeps the same voice at a legible size.
+ */
+.type-caps-sm {
+  font-family: var(--font-grotesk);
+  font-weight: 600;
+  font-size: clamp(0.75rem, 0.95vw, 0.875rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.45;
+}
+
+/* Wide-tracked eyebrow, the counterweight to a heavy uppercase heading */
+.type-eyebrow {
+  font-family: var(--font-grotesk);
+  font-weight: 600;
+  font-size: clamp(0.625rem, 0.85vw, 0.75rem);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* ── TIMELINE: Bebas Neue ───────────────────────────────────────────────────
+ * Condensed caps, movie-credit proportions. Bebas is caps-only with a single
+ * weight, so rhythm has to come from scale and tracking instead.
+ */
+.type-condensed {
+  font-family: var(--font-condensed);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.86;
+}
+
+.type-reel-year {
+  font-family: var(--font-condensed);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 0.8;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ── FOOTER / UI: Inter ─────────────────────────────────────────────────────
+ * Deliberately the quietest voice on the site. Never competes.
+ */
+.type-ui {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.65;
+}
+
+.type-ui--label {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* ── Scale ──────────────────────────────────────────────────────────────────
+ * Oversized on purpose, and tracking tightens as size grows.
+ */
+.size-mega {
+  font-size: clamp(3.25rem, 13vw, 15rem);
+  letter-spacing: -0.045em;
+}
+.size-display {
+  font-size: clamp(2.75rem, 8.5vw, 9rem);
+  letter-spacing: -0.035em;
+}
+.size-xl {
+  font-size: clamp(2.25rem, 5.5vw, 5rem);
+}
+.size-lg {
+  font-size: clamp(1.75rem, 3.4vw, 3rem);
+}
+
+/* Optical hang: large quotes and caps sit visually inset unless pulled left */
+.optical-hang {
+  margin-left: -0.055em;
+}
+
+/* Type Scale */
+.text-hero {
+  font-family: var(--font-luxe);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: clamp(4rem, 10vw, 10rem);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+}
+
+.text-display {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6vw, 6rem);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -0.025em;
+}
+
+.text-h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.text-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.text-h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.text-h4 {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.text-label {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.text-body-lg {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+.text-body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.text-caption {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+/* ─── Layout Utilities ────────────────────────────────────────────────────── */
+
+.container-jollo {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1rem, 4vw, 4rem);
+  padding-right: clamp(1rem, 4vw, 4rem);
+}
+
+/* Gallery — wider container for cinematic spreads */
+.container-gallery {
+  width: 100%;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1rem, 4vw, 4rem);
+  padding-right: clamp(1rem, 4vw, 4rem);
+}
+
+.section-padding {
+  padding-top: clamp(5rem, 10vw, 10rem);
+  padding-bottom: clamp(5rem, 10vw, 10rem);
+}
+
+/* ─── Yellow Glow ─────────────────────────────────────────────────────────── */
+
+.yellow-glow {
+  box-shadow: var(--shadow-yellow);
+}
+
+/* ─── Focus Styles ────────────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid #e9e612;
+  outline-offset: 3px;
+}
+
+/* ─── Selection ───────────────────────────────────────────────────────────── */
+
+::selection {
+  background-color: #e9e612;
+  color: #000000;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e9e612;
+}
+
+/* ─── Reduced Motion ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Lenis ───────────────────────────────────────────────────────────────── */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* ─── Marquee Animation ───────────────────────────────────────────────────── */
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ─── Ken Burns Animation ─────────────────────────────────────────────────── */
+
+@keyframes kenBurns {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08) translate(1px, -1px);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-ken-burns {
+  animation: kenBurns 25s ease-in-out infinite;
+}
+
+/* ─── Hero scroll cue ─────────────────────────────────────────────────────── */
+
+@keyframes heroCue {
+  0% { transform: scaleX(0); transform-origin: left; }
+  50% { transform: scaleX(1); transform-origin: left; }
+  51% { transform: scaleX(1); transform-origin: right; }
+  100% { transform: scaleX(0); transform-origin: right; }
+}
+
+/* ─── Gallery featured-works stagger ─────────────────────────────────────── */
+
+/* Offsets the right-hand column so the pair reads as an editorial spread
+   rather than a grid row. Desktop only — stacked layouts stay flush. */
+@media (min-width: 1024px) {
+  .fw-stagger {
+    margin-top: clamp(3rem, 6vw, 7rem);
+  }
+}
+
+/* ─── Gallery scroll indicator ───────────────────────────────────────────── */
+
+@keyframes gallery-scroll {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+.animate-gallery-scroll {
+  animation: gallery-scroll 1.8s ease-in-out infinite;
+}
+
+/* ─── Scrollbar hide utility ─────────────────────────────────────────────── */
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Clip Wipe ───────────────────────────────────────────────────────────── */
+
+.clip-wipe {
+  clip-path: inset(0 100% 0 0);
+}
+
+.clip-wipe-visible {
+  clip-path: inset(0 0% 0 0);
+}
+
+/* ─── Image Cover ─────────────────────────────────────────────────────────── */
+
+.img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ─── Custom Cursor ───────────────────────────────────────────────────────── */
+/* Native cursor is preserved. The custom yellow ball will follow the native cursor. */
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Clone-port design system — subpage layouts & animations ported from the
+   hildenkaira.fi design (typo-scroll, chapters, copy-email, quick-nav),
+   re-themed to Jollo colors (black / white / #e9e612).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Arrow icon button ─────────────────────────────────────────────────── */
+.cp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75em;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+.cp-btn__text {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+.cp-btn__icon {
+  width: 2.75em;
+  height: 2.75em;
+  border-radius: 50%;
+  background: #e9e612;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0, 1);
+}
+.cp-btn__arrows {
+  position: relative;
+  width: 40%;
+  aspect-ratio: 1;
+}
+.cp-btn__arrows svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-45deg);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0, 1);
+}
+.cp-btn__arrows svg:last-child {
+  transform: rotate(-45deg) translate(-150%, 150%);
+}
+.cp-btn:hover .cp-btn__icon {
+  transform: scale(1.08);
+}
+.cp-btn:hover .cp-btn__arrows svg:first-child {
+  transform: rotate(-45deg) translate(150%, -150%);
+}
+.cp-btn:hover .cp-btn__arrows svg:last-child {
+  transform: rotate(-45deg) translate(0, 0);
+}
+.cp-btn.is-dark .cp-btn__icon {
+  background: #fff;
+}
+.cp-btn:hover .cp-btn__icon {
+  box-shadow: 0 0 28px -4px rgba(233, 230, 18, 0.65);
+}
+.cp-btn.is-dark:hover .cp-btn__icon {
+  box-shadow: 0 0 28px -4px rgba(255, 255, 255, 0.5);
+}
+/* Text underline wipes in from the left on hover */
+.cp-btn__text::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.cp-btn:hover .cp-btn__text::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* ─── Global button system ──────────────────────────────────────────────────
+   One pill button, three fills. Every variant animates the same way: a solid
+   colour sweeps up from the bottom edge while the label inverts to match.
+   Use .jbtn + a --variant, optionally + a --size.
+   ─────────────────────────────────────────────────────────────────────────── */
+.jbtn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1.1rem 2.5rem;
+  min-height: 3rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: color 0.45s cubic-bezier(0.65, 0, 0.35, 1),
+    border-color 0.45s cubic-bezier(0.65, 0, 0.35, 1),
+    box-shadow 0.45s cubic-bezier(0.65, 0, 0.35, 1),
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* The liquid fill. Sits behind the label, above the button's own background. */
+.jbtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  transform: translateY(101%);
+  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.jbtn:hover::before,
+.jbtn:focus-visible::before {
+  transform: translateY(0);
+}
+.jbtn:active {
+  transform: scale(0.97);
+}
+.jbtn:focus-visible {
+  outline: 2px solid #e9e612;
+  outline-offset: 3px;
+}
+
+/* Trailing arrow / icon nudges forward with the fill */
+.jbtn__icon {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.jbtn:hover .jbtn__icon,
+.jbtn:focus-visible .jbtn__icon {
+  transform: translateX(0.3rem);
+}
+
+/* ── Variants ── */
+.jbtn--primary {
+  background: #e9e612;
+  border-color: #e9e612;
+  color: #000;
+  box-shadow: 0 8px 30px -10px rgba(233, 230, 18, 0.5);
+}
+.jbtn--primary::before {
+  background: #fff;
+}
+.jbtn--primary:hover,
+.jbtn--primary:focus-visible {
+  color: #000;
+  border-color: #fff;
+  box-shadow: 0 0 44px -8px rgba(233, 230, 18, 0.55);
+}
+
+.jbtn--outline {
+  background: rgba(233, 230, 18, 0.03);
+  border-color: rgba(233, 230, 18, 0.5);
+  color: #e9e612;
+}
+.jbtn--outline::before {
+  background: #e9e612;
+}
+.jbtn--outline:hover,
+.jbtn--outline:focus-visible {
+  color: #000;
+  border-color: #e9e612;
+  box-shadow: 0 0 44px -10px rgba(233, 230, 18, 0.5);
+}
+
+.jbtn--ghost {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.75);
+}
+.jbtn--ghost::before {
+  background: #fff;
+}
+.jbtn--ghost:hover,
+.jbtn--ghost:focus-visible {
+  color: #000;
+  border-color: #fff;
+}
+
+/* For light/yellow cards — inverts the whole scheme */
+.jbtn--dark {
+  background: transparent;
+  border-color: rgba(0, 0, 0, 0.25);
+  color: #000;
+}
+.jbtn--dark::before {
+  background: #000;
+}
+.jbtn--dark:hover,
+.jbtn--dark:focus-visible {
+  color: #fff;
+  border-color: #000;
+}
+
+/* ── Sizes ── */
+.jbtn--sm {
+  padding: 0.75rem 1.6rem;
+  min-height: 2.75rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+}
+.jbtn--lg {
+  padding: 1.3rem 3rem;
+  min-height: 3.5rem;
+  font-size: 0.8rem;
+}
+.jbtn--block {
+  width: 100%;
+}
+
+/* ── Circular icon-only button ── */
+.jbtn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: color 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    border-color 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    box-shadow 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.jbtn-icon:hover {
+  color: #e9e612;
+  border-color: rgba(233, 230, 18, 0.55);
+  box-shadow: 0 0 24px -6px rgba(233, 230, 18, 0.55);
+  transform: translateY(-2px);
+}
+.jbtn-icon:focus-visible {
+  outline: 2px solid #e9e612;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jbtn,
+  .jbtn::before,
+  .jbtn__icon,
+  .jbtn-icon,
+  .cp-btn__text::after {
+    transition-duration: 0.01ms !important;
+  }
+  .jbtn:active,
+  .jbtn-icon:hover {
+    transform: none;
+  }
+}
+
+/* ─── Work: infinite typo scroller ──────────────────────────────────────── */
+.typo-scroll {
+  background: transparent;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  position: relative;
+  overflow: clip;
+}
+.typo-scroll_fade {
+  z-index: 3;
+  background: linear-gradient(180deg, #000, transparent);
+  pointer-events: none;
+  width: 100%;
+  height: 10em;
+  position: absolute;
+  inset: 0% 0% auto;
+}
+.typo-scroll_fade.is-bottom {
+  background: linear-gradient(0deg, #000, transparent);
+  height: 8em;
+  inset: auto 0% 0%;
+}
+.typo-scroll__collection {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+.typo-scroll__list {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+}
+.typo-scroll__item {
+  cursor: pointer;
+  width: 100%;
+}
+.typo-scroll__link {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  opacity: 0.25;
+  width: 100%;
+  color: inherit;
+  display: flex;
+  justify-content: center;
+  padding-top: 2.5em;
+  padding-bottom: 1em;
+  text-decoration: none;
+  transition: opacity 0.35s ease;
+  position: relative;
+}
+.typo-scroll__item[data-typo-scroll-item="active"] .typo-scroll__link {
+  opacity: 1;
+}
+/* Services list — the grotesk voice at its loudest: heavy, uppercase, and
+   tracked open just enough that the caps do not lock together. */
+.typo-scroll__h {
+  z-index: 1;
+  text-align: center;
+  white-space: nowrap;
+  margin: 0;
+  font-family: var(--font-grotesk);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(2.6rem, 7.4vw, 7.5rem);
+  letter-spacing: 0.005em;
+  line-height: 0.92;
+  position: relative;
+}
+.typo-scroll__hover-wrap {
+  z-index: 0;
+  pointer-events: none;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 140%;
+  position: absolute;
+  inset: auto 0% 0%;
+  overflow: clip;
+}
+.typo-scroll__hover {
+  z-index: 0;
+  pointer-events: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  height: 100%;
+  padding: 0 2.25em 2.25em;
+  position: relative;
+  overflow: clip;
+  transform: translateY(100%);
+}
+.typo-scroll__hover-button {
+  pointer-events: auto;
+  /* The category/tagline row that used to sit on the left was removed, so the
+     parent's space-between has nothing to push against — keep the button on
+     the right explicitly. */
+  margin-left: auto;
+}
+.typo-scroll__hover-img {
+  z-index: 2;
+  aspect-ratio: 4 / 6;
+  transform-origin: 50% 0;
+  width: 13em;
+  position: absolute;
+  inset: auto 0% 0% auto;
+  overflow: hidden;
+  border-radius: 0.4em;
+  transform: rotate(16deg) translate(-150%, 100%);
+}
+.typo-scroll__img {
+  z-index: 2;
+  aspect-ratio: 1;
+  width: 7em;
+  height: 7em;
+  margin-top: -0.75em;
+  position: absolute;
+  overflow: hidden;
+  border-radius: 0.4em;
+  transform: scale(0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── About: chapter timeline ───────────────────────────────────────────── */
+.chapter-group {
+  position: relative;
+}
+.chapter-year_wrapper {
+  pointer-events: none;
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0%;
+  z-index: 0;
+}
+.chapter-year_sticky {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
+  width: 100%;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+.chapter-year_mask {
+  position: relative;
+  width: 100%;
+  height: 1.05em;
+  overflow: hidden;
+}
+.chapter-year_item {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  white-space: nowrap;
+  font-size: inherit;
+  line-height: 1;
+  transform: translateY(110%) translateY(0.08em) scale(0.985);
+  opacity: 0.6;
+  filter: blur(6px);
+  transition:
+    transform 0.7s cubic-bezier(0.7, 0, 0.2, 1),
+    opacity 0.5s ease,
+    filter 0.5s ease;
+}
+.chapter-year_item.is-active {
+  transform: translateY(0%) translateY(0.08em) scale(1);
+  opacity: 1;
+  filter: blur(0);
+}
+.chapter-year_item.is-out-up {
+  transform: translateY(-110%) translateY(0.08em) scale(0.985);
+}
+.chapter-year_item.is-out-down {
+  transform: translateY(110%) translateY(0.08em) scale(0.985);
+}
+/* The giant years behind the founder chapters are timeline, not editorial —
+   condensed caps give them the movie-credit rhythm of the film strip below. */
+.chapter-year_value {
+  font-family: var(--font-condensed);
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.07);
+  text-align: center;
+  display: block;
+}
+.chapter-item {
+  gap: 1em;
+  min-height: 100vh;
+  color: #fff;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 9.25em;
+  position: relative;
+  z-index: 1;
+}
+.chapter-path_wrap {
+  display: flex;
+  flex-flow: column;
+  flex: 1;
+  align-items: center;
+  align-self: stretch;
+}
+.chapter-path {
+  position: relative;
+  width: 2px;
+  flex: 1;
+  margin: 0 auto;
+}
+.chapter-path_track,
+.chapter-path_fill {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    currentColor 0px,
+    currentColor 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  background-repeat: repeat-y;
+  background-size: 100% 16px;
+}
+.chapter-path_track {
+  color: rgba(255, 255, 255, 0.18);
+}
+.chapter-path_fill-mask {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  height: 0%;
+}
+.chapter-path_fill {
+  color: #e9e612;
+}
+.chapter-path_trigger {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  transform: translateX(-50%);
+}
+.chapter-path_emoji {
+  width: 5em;
+  height: 5em;
+  position: relative;
+  right: -50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transform: translateX(-50%) scale(0.6) rotate(-10deg);
+  opacity: 0;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+.chapter-content {
+  gap: 1.5em;
+  text-align: center;
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: center;
+  max-width: 40em;
+  margin: 0 auto;
+}
+.chapter-title,
+.chapter-text {
+  opacity: 0;
+  transform: translateY(24px);
+  will-change: transform, opacity;
+}
+
+/* ─── Contact: copy email button ────────────────────────────────────────── */
+.copy-email-button {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+.copy-email-text__wrap {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: 1.625em;
+  overflow: hidden;
+}
+.copy-email-text__el {
+  white-space: nowrap;
+  line-height: 1.625;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0, 1);
+}
+@media (hover: hover) {
+  .copy-email-button:hover .copy-email-text__el {
+    transform: translateY(-100%);
+  }
+}
+.copy-email-button[data-copy-button="copied"] .copy-email-text__el {
+  transform: translateY(-200%) !important;
+  color: #e9e612;
+}
+
+/* ─── Services: fixed quick-nav with scroll progress ────────────────────── */
+.quick-nav {
+  z-index: 100;
+  gap: 0.75em;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 1em;
+  position: fixed;
+  inset: auto 0% 0%;
+}
+.quick-nav-link {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5em;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.quick-nav-link_progress {
+  background: rgba(233, 230, 18, 0.18);
+  width: 0%;
+  height: 100%;
+  position: absolute;
+  inset: 0%;
+  pointer-events: none;
+}
+.quick-nav-link_label {
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding: 0.9em 1em;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.25s ease;
+}
+.quick-nav-link:hover .quick-nav-link_label {
+  color: #e9e612;
+}
+
+/* ─── Service pages: CSS accordion (FAQ) ────────────────────────────────── */
+.accordion-css__list {
+  display: flex;
+  flex-flow: column;
+  gap: 0.5em;
+  margin: 0;
+  padding: 0;
+}
+.accordion-css__item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 0.75em;
+  color: #fff;
+  list-style: none;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+.accordion-css__item[data-accordion-status="active"] {
+  border-color: rgba(233, 230, 18, 0.3);
+}
+.accordion-css__item-top {
+  gap: 1em;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25em;
+}
+.accordion-css__item-h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.accordion-css__item-icon {
+  background: #e9e612;
+  color: #000;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2em;
+  height: 2em;
+  border-radius: 0.4em;
+  transform: rotate(180deg);
+  transition: transform 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+}
+.accordion-css__item[data-accordion-status="active"] .accordion-css__item-icon {
+  transform: rotate(0.001deg);
+}
+.accordion-css__item-icon svg {
+  width: 55%;
+}
+.accordion-css__item-bottom {
+  display: grid;
+  grid-template-rows: 0fr;
+  position: relative;
+  overflow: hidden;
+  transition: grid-template-rows 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+}
+.accordion-css__item[data-accordion-status="active"] .accordion-css__item-bottom {
+  grid-template-rows: 1fr;
+}
+.accordion-css__item-bottom-wrap {
+  display: flex;
+  flex-flow: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.accordion-css__item-bottom-content {
+  padding: 0 1.5em 1.5em;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+}
+
+/* ─── CTA cards ("Ready to work with us?") ──────────────────────────────── */
+.cta-cards {
+  display: flex;
+  flex-flow: wrap;
+  justify-content: center;
+  gap: 3em;
+}
+.cta-card_wrap {
+  width: min(19em, 85vw);
+  height: 27em;
+  position: relative;
+}
+.cta-card {
+  gap: 0.5em;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 2em;
+  position: relative;
+  overflow: clip;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 0.25em;
+  will-change: transform;
+}
+.cta-card.is-lime {
+  background: #e9e612;
+  color: #000;
+}
+.cta-card.is-grey {
+  background: #181818;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.cta-card_h {
+  font-family: var(--font-editorial);
+  font-size: 1.9em;
+  line-height: 1.1;
+  margin: 0;
+  padding-top: 0.5em;
+}
+.cta-card_emoji {
+  margin-top: auto;
+  margin-bottom: auto;
+  width: 5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cta-card:hover .cta-card_emoji {
+  transform: scale(1.08) rotate(-4deg);
+}
+.cta-card_body {
+  gap: 1.25em;
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: auto;
+  text-align: center;
+}
+.cta-card_btn {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.8em 1.4em;
+  border-radius: 0.3em;
+}
+.cta-card.is-lime .cta-card_btn {
+  background: #000;
+  color: #fff;
+}
+.cta-card.is-grey .cta-card_btn {
+  background: #fff;
+  color: #000;
+}
+
+/* CTA popup overlay */
+.cta-pop-up {
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  position: fixed;
+  inset: 0%;
+  padding: 1em;
+}
+.cta-pop-up_form {
+  width: min(44em, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #0c0c0c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.25em;
+  color: #fff;
+  position: relative;
+  padding: clamp(2rem, 4vw, 3em);
+}
+.cta-pop-up_form--split {
+  width: min(64em, 96%);
+  max-height: 92vh;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .cta-pop-up_form--split {
+    grid-template-columns: 300px 1fr;
+  }
+}
+@media (min-width: 1024px) {
+  .cta-pop-up_form--split {
+    grid-template-columns: 340px 1fr;
+  }
+}
+.cta-pop-up_brand {
+  display: none;
+  position: relative;
+  background: #0a0a0a;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding: clamp(2rem, 3vw, 2.5rem);
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .cta-pop-up_brand {
+    display: flex;
+    flex-direction: column;
+  }
+}
+.cta-pop-up_content {
+  position: relative;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  overflow-y: auto;
+  max-height: 92vh;
+}
+.cta-pop-up_close {
+  z-index: 10;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2.25em;
+  height: 2.25em;
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5em;
+  position: absolute;
+  inset: 1.25em 1.25em auto auto;
+  transition: all 0.3s ease;
+}
+.cta-pop-up_close:hover {
+  color: #e9e612;
+  background: rgba(233, 230, 18, 0.08);
+  border-color: rgba(233, 230, 18, 0.2);
+  transform: rotate(90deg);
+}
+
+/* ─── Service pages: pinned 3D card stack ───────────────────────────────── */
+.services-pin-height {
+  height: 400vh;
+  padding-top: 7.5vh;
+}
+.services-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.services-stack_list {
+  perspective: 25vw;
+  width: min(90vw, 62em);
+  height: min(70vh, 34em);
+  position: relative;
+}
+.services-stack_item {
+  background: #101010;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1em;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+.services-stack_card {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: clamp(1.5em, 3vw, 2.5em);
+}
+
+/* ─── Genesis: the Our Story origin sequence ──────────────────────────────── */
+
+/*
+ * The track is pure scroll runway — the stage inside it is `position: sticky`,
+ * so there is no GSAP pin-spacer and no layout shift when the section mounts.
+ * Seven chapters need room to breathe; mobile gets a shorter run.
+ */
+.genesis-track {
+  height: 700vh;
+}
+
+@media (max-width: 900px) {
+  .genesis-track {
+    height: 520vh;
+  }
+}
+
+/* Progress rail ----------------------------------------------------------- */
+
+.genesis-rail {
+  height: min(48vh, 30rem);
+}
+
+.genesis-rail__track {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  width: 1px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.genesis-rail__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(233, 230, 18, 0.15), #e9e612);
+  transform: scaleY(0);
+  transform-origin: top;
+  will-change: transform;
+}
+
+.genesis-rail__tick {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #e9e612;
+  transition: opacity 500ms var(--ease-out-expo);
+}
+
+/*
+ * The opening chapter is legible the moment the page loads (its scroll-driven
+ * opacity starts at 1), so the slow cinematic entrance lives here on the
+ * overlay wrapper — a separate element, so the JS-driven per-chapter opacity
+ * and this animation multiply instead of overwriting each other.
+ */
+.genesis-enter {
+  animation: genesis-enter 2200ms var(--ease-out-expo) both;
+}
+
+@keyframes genesis-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * The gold thread. The orb docks low and small at the end of the sequence and
+ * this runs out of it toward the page below, where the founder story's own
+ * timeline rail (.chapter-path_fill) picks the same gold up and carries it
+ * through 2008 → today. The symbolic act hands the light to the real one.
+ */
+.genesis-bridge {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 1px;
+  /* Stops short of the closing headline, which is anchored at bottom-7vh —
+     the thread reads as leaving the frame, not striking through the words. */
+  height: 6vh;
+  z-index: 15;
+  pointer-events: none;
+  transform-origin: top;
+  background: linear-gradient(to bottom, rgba(233, 230, 18, 0.85), rgba(233, 230, 18, 0));
+  will-change: transform, opacity;
+}
+
+/*
+ * The thread continuing past the pinned stage, through the handover section.
+ * It starts where .genesis-bridge left off and dies out as the real story's
+ * own rail takes over.
+ */
+.genesis-bridge-continue {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: clamp(4rem, 9vw, 8rem);
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(233, 230, 18, 0.5), rgba(233, 230, 18, 0));
+}
+
+/* Scroll hint ------------------------------------------------------------- */
+
+.genesis-hint__line {
+  display: block;
+  width: 1px;
+  height: 3rem;
+  background: linear-gradient(to bottom, rgba(233, 230, 18, 0.55), transparent);
+  transform-origin: top;
+  animation: genesis-hint 2.6s var(--ease-in-out-expo) infinite;
+}
+
+@keyframes genesis-hint {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+    opacity: 0.3;
+  }
+  45% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+/*
+ * Reduced motion swaps in an entirely static section (see GenesisSequence),
+ * but kill the ambient loops here too in case the query flips mid-session.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .genesis-hint__line,
+  .genesis-enter {
+    animation: none;
+  }
+  .genesis-rail__tick {
+    transition: none;
+  }
+}
+
+/* ─── Film strip: Our Journey in Frames ───────────────────────────────────── */
+
+.filmstrip-section {
+  background: #111111;
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+}
+
+/*
+ * Sizing is driven off a single perforation pitch, and the frame width is an
+ * exact multiple of it. That matters: the sprocket rails are one continuous
+ * repeating gradient across the whole track, so if a frame were not a whole
+ * number of pitches the holes would visibly jump every time the loop wraps.
+ */
+.filmstrip {
+  --perf-pitch: 20px;
+  --perf-hole-h: 9px;
+  --rail-h: 26px;
+  --frame-w: calc(var(--perf-pitch) * 15);
+  --gutter: 0.625rem;
+  --film-edge: #1c1c1a;
+  --film-face: #0f0f0f;
+
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+@media (min-width: 1280px) {
+  .filmstrip {
+    --perf-pitch: 24px;
+    --perf-hole-h: 10px;
+    --rail-h: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .filmstrip {
+    --perf-pitch: 14px;
+    --perf-hole-h: 7px;
+    --rail-h: 18px;
+    --gutter: 0.5rem;
+  }
+}
+
+.filmstrip__viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* Premium shadow: the reel sits above the page, lit from the front */
+  filter: drop-shadow(0 26px 44px rgba(0, 0, 0, 0.65));
+}
+
+.filmstrip__track {
+  position: relative;
+  display: flex;
+  width: max-content;
+  padding-block: var(--rail-h);
+  /* Film base: darker through the middle where the frames sit, with the
+     stock catching a little more light along both edges. */
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.014) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(
+      180deg,
+      var(--film-edge) 0%,
+      #141413 14%,
+      var(--film-face) 50%,
+      #141413 86%,
+      var(--film-edge) 100%
+    );
+  will-change: transform;
+  /* GPU transforms only: x is animated, nothing here triggers layout */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+/*
+ * Perforations. One repeating gradient per rail spanning the entire track,
+ * so the holes march continuously through every frame boundary.
+ */
+.filmstrip__track::before,
+.filmstrip__track::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--rail-h);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0 25%,
+    #050505 25% 75%,
+    transparent 75% 100%
+  );
+  background-size: var(--perf-pitch) var(--perf-hole-h);
+  background-repeat: repeat-x;
+  background-position: left center;
+  pointer-events: none;
+}
+
+.filmstrip__track::before {
+  top: 0;
+}
+.filmstrip__track::after {
+  bottom: 0;
+}
+
+/* ── Frames ───────────────────────────────────────────────────────────────── */
+
+.filmstrip__frame {
+  position: relative;
+  flex: 0 0 var(--frame-w);
+  width: var(--frame-w);
+  /* Even film base on all four sides of the window, so each frame sits
+     centred in the stock between the two perforation rails. */
+  padding: var(--gutter);
+  transition: transform 620ms var(--ease-out-expo);
+  transform-origin: center center;
+  cursor: pointer;
+}
+
+.filmstrip__frame:hover,
+.filmstrip__frame:focus-visible {
+  /* Transform only, so neighbours never reflow */
+  transform: scale(1.045);
+  z-index: 3;
+}
+
+.filmstrip__window {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 2;
+  border-radius: 3px;
+  background: #000;
+  /* The frame line printed into the stock, plus depth inside the gate */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 0 22px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(0, 0, 0, 0.9);
+  transition: box-shadow 620ms var(--ease-out-expo);
+}
+
+.filmstrip__window img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* Unhovered frames sit back: cooler and dimmer, like unlit film */
+  filter: brightness(0.62) saturate(0.72) contrast(1.05);
+  transform: scale(1.02);
+  transition:
+    filter 620ms var(--ease-out-expo),
+    transform 900ms var(--ease-out-expo);
+  user-select: none;
+}
+
+.filmstrip__frame:hover .filmstrip__window img,
+.filmstrip__frame:focus-visible .filmstrip__window img {
+  filter: brightness(1.06) saturate(1.04) contrast(1);
+  transform: scale(1.06);
+}
+
+/* Gold gate light on the hovered frame */
+.filmstrip__frame:hover .filmstrip__window,
+.filmstrip__frame:focus-visible .filmstrip__window {
+  box-shadow:
+    inset 0 0 0 1px rgba(233, 230, 18, 0.55),
+    inset 0 0 26px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(233, 230, 18, 0.2),
+    0 0 38px rgba(233, 230, 18, 0.18);
+}
+
+.filmstrip__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.88) 0%,
+    rgba(0, 0, 0, 0.45) 34%,
+    transparent 62%
+  );
+  opacity: 0;
+  transition: opacity 620ms var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.filmstrip__frame:hover .filmstrip__scrim,
+.filmstrip__frame:focus-visible .filmstrip__scrim {
+  opacity: 1;
+}
+
+/* ── Milestone text, revealed on hover ────────────────────────────────────── */
+
+.filmstrip__reveal {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: clamp(0.75rem, 1.5vw, 1.25rem);
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition:
+    opacity 540ms var(--ease-out-expo),
+    transform 540ms var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.filmstrip__frame:hover .filmstrip__reveal,
+.filmstrip__frame:focus-visible .filmstrip__reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* The year is the loud element here — condensed caps at movie-credit scale,
+   with the title running quiet underneath it. */
+.filmstrip__reveal-year {
+  display: block;
+  font-family: var(--font-condensed);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 3.6vw, 3.5rem);
+  letter-spacing: 0.03em;
+  line-height: 0.82;
+  color: #e9e612;
+  margin-bottom: 0.15rem;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.filmstrip__reveal-title {
+  display: block;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: clamp(0.75rem, 1vw, 0.875rem);
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Light and ends ───────────────────────────────────────────────────────── */
+
+/* A fixed highlight the film passes under, rather than one that travels with it */
+.filmstrip__sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 28%,
+    rgba(255, 255, 255, 0.05) 45%,
+    rgba(255, 255, 255, 0.016) 55%,
+    transparent 72%
+  );
+}
+
+/* Both ends dissolve into the page, so the reel reads as endless */
+.filmstrip__ends {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    #111111 0%,
+    rgba(17, 17, 17, 0) 14%,
+    rgba(17, 17, 17, 0) 86%,
+    #111111 100%
+  );
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
+
+/*
+ * No reel, no loop. The strip becomes an ordinary horizontally scrollable
+ * filmstrip the visitor drives themselves, and the duplicate frames are
+ * hidden so the years are not announced twice.
+ */
+.filmstrip[data-reduced="true"] .filmstrip__viewport {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.filmstrip[data-reduced="true"] .filmstrip__track {
+  transform: none !important;
+}
+
+.filmstrip[data-reduced="true"] .filmstrip__frame[aria-hidden="true"] {
+  display: none;
+}
+
+.filmstrip[data-reduced="true"] .filmstrip__ends {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filmstrip__frame,
+  .filmstrip__window,
+  .filmstrip__window img,
+  .filmstrip__scrim,
+  .filmstrip__reveal {
+    transition: none;
+  }
+}
+
+/* ─── Art-directed headings ───────────────────────────────────────────────────
+ *
+ * The five families give the site its voices. These are the devices a single
+ * heading is composed FROM — so a headline is set word by word rather than
+ * typed in one style.
+ *
+ * Everything scales in `em`, relative to the heading it sits in. That is the
+ * whole trick: one font-size on the <h>, and every word inside is expressed as
+ * a ratio of it, so an art-directed headline stays art-directed at every
+ * breakpoint instead of falling apart below 900px.
+ */
+
+.tx-head {
+  display: block;
+  line-height: 0.86;
+  text-wrap: balance;
+}
+
+/* ── Family ────────────────────────────────────────────────────────────────── */
+
+.tx-luxe {
+  font-family: var(--font-luxe);
+  font-optical-sizing: auto;
+  font-weight: 400;
+}
+.tx-serif {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+}
+.tx-grotesk {
+  font-family: var(--font-grotesk);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.tx-condensed {
+  font-family: var(--font-condensed);
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+/* ── Cut ───────────────────────────────────────────────────────────────────── */
+
+.tx-italic {
+  font-style: italic;
+}
+.tx-black {
+  font-weight: 900;
+}
+.tx-light {
+  font-weight: 300;
+}
+
+/* ── Scale, as a ratio of the heading ──────────────────────────────────────── */
+
+.tx-xs {
+  font-size: 0.3em;
+}
+.tx-sm {
+  font-size: 0.46em;
+}
+.tx-md {
+  font-size: 0.72em;
+}
+.tx-xl {
+  font-size: 1.18em;
+}
+.tx-mega {
+  font-size: 1.42em;
+}
+
+/* ── Tracking ──────────────────────────────────────────────────────────────── */
+
+.tx-tight {
+  letter-spacing: -0.045em;
+}
+.tx-snug {
+  letter-spacing: -0.02em;
+}
+.tx-wide {
+  letter-spacing: 0.28em;
+}
+.tx-vast {
+  letter-spacing: 0.52em;
+}
+
+/* ── Fill and stroke ───────────────────────────────────────────────────────── */
+
+.tx-gold {
+  color: #e9e612;
+}
+.tx-dim {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+/*
+ * Outlined type. Guarded behind @supports because the whole effect rests on
+ * `color: transparent` — without the stroke to draw it, the word would simply
+ * vanish. The fallback keeps it solid but dimmed, so the emphasis still reads.
+ */
+/* Fallbacks first — the @supports block below must be able to override them.
+   Declaring a fallback *after* the @supports block silently defeats it: same
+   specificity, later wins, and the word renders filled instead of outlined. */
+.tx-outline {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.tx-outline-gold {
+  color: rgba(233, 230, 18, 0.55);
+}
+
+@supports (-webkit-text-stroke: 1px #fff) {
+  .tx-outline {
+    color: transparent;
+    -webkit-text-stroke: 0.014em rgba(255, 255, 255, 0.62);
+    paint-order: stroke fill;
+  }
+  .tx-outline-gold {
+    color: transparent;
+    -webkit-text-stroke: 0.016em rgba(233, 230, 18, 0.85);
+    paint-order: stroke fill;
+  }
+}
+
+/* ── Placement ─────────────────────────────────────────────────────────────── */
+
+/* Rows of a composed headline, each independently alignable */
+.tx-row {
+  display: block;
+}
+.tx-row--start {
+  text-align: left;
+}
+.tx-row--centre {
+  text-align: center;
+}
+.tx-row--end {
+  text-align: right;
+}
+
+/* Pull a row up into the one above it — the overlap device */
+.tx-overlap {
+  margin-top: -0.24em;
+}
+.tx-overlap-lg {
+  margin-top: -0.36em;
+}
+
+/* Indent a row off the margin so the block sits asymmetrically */
+.tx-indent {
+  padding-left: 8%;
+}
+.tx-indent-lg {
+  padding-left: 18%;
+}
+.tx-outdent {
+  padding-right: 10%;
+}
+
+/* Nudge a word off its baseline without disturbing the line box */
+.tx-lift {
+  position: relative;
+  top: -0.14em;
+}
+.tx-drop {
+  position: relative;
+  top: 0.1em;
+}
+
+/* Large caps and quotes sit visually inset; pull them back to the margin */
+.tx-hang {
+  margin-left: -0.05em;
+}
+
+/* A hairline rule that reads as a typographic mark rather than a divider */
+.tx-rule {
+  display: inline-block;
+  width: clamp(2rem, 6vw, 5.5rem);
+  height: 0.055em;
+  min-height: 1px;
+  background: currentColor;
+  vertical-align: 0.34em;
+  opacity: 0.5;
+}
+
+/* ── Staggered entrance ────────────────────────────────────────────────────── */
+
+/*
+ * Words rise on a stagger rather than the whole line arriving at once, so the
+ * composition assembles itself. Purely CSS so it costs no JS on any section
+ * that does not already run a timeline.
+ */
+@keyframes tx-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.5em, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.tx-stagger > * {
+  animation: tx-rise 1100ms var(--ease-out-expo) both;
+}
+.tx-stagger > *:nth-child(1) {
+  animation-delay: 60ms;
+}
+.tx-stagger > *:nth-child(2) {
+  animation-delay: 180ms;
+}
+.tx-stagger > *:nth-child(3) {
+  animation-delay: 300ms;
+}
+.tx-stagger > *:nth-child(4) {
+  animation-delay: 420ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tx-stagger > * {
+    animation: none;
+  }
+}
